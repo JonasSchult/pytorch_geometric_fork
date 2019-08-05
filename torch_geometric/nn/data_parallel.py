@@ -3,6 +3,7 @@ from itertools import chain
 
 import torch
 from torch_geometric.data import Batch
+from torch_geometric.data import GraphLevelBatch
 
 
 class DataParallel(torch.nn.DataParallel):
@@ -46,7 +47,7 @@ class DataParallel(torch.nn.DataParallel):
             return None
 
         if not self.device_ids or len(self.device_ids) == 1:  # Fallback
-            data = Batch.from_data_list(data_list).to(self.src_device)
+            data = GraphLevelBatch.from_graph_data_list(data_list).to(self.src_device)
             return self.module(data)
 
         for t in chain(self.module.parameters(), self.module.buffers()):
@@ -76,7 +77,7 @@ class DataParallel(torch.nn.DataParallel):
         split = split.tolist()
 
         return [
-            Batch.from_data_list(data_list[split[i]:split[i + 1]]).to(
+            GraphLevelBatch.from_graph_data_list(data_list[split[i]:split[i + 1]]).to(
                 torch.device('cuda:{}'.format(device_ids[i])))
             for i in range(len(split) - 1)
         ]

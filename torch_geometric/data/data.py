@@ -141,6 +141,18 @@ class Data(object):
         # everything else in the first dimension.
         return -1 if bool(re.search('(index|face)', key)) else 0
 
+    def __cumsum__(self, key, value):
+        r"""If :obj:`True`, :obj:`value` of attribute :obj:`key` is
+        cumulatively summed up when creating batches.
+
+        .. note::
+
+            This method is for internal use only, and should only be overridden
+            if the batch concatenation process is corrupted for a specific data
+            attribute.
+        """
+        return bool(re.search('(index|face)', key))
+
     def __inc__(self, key, value):
         r""""Returns the incremental count to cumulatively increase the value
         of the next attribute of :obj:`key` when creating batches.
